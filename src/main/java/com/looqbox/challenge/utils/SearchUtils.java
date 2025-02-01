@@ -1,8 +1,8 @@
 package com.looqbox.challenge.utils;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
@@ -25,19 +25,19 @@ public class SearchUtils {
     public List<PokemonName> sortPokemons(List<PokemonName> pokemons, SortType sort) { //try to clean this method
         switch (sort) {
             case ALPHABETICAL:
-                return sortPokemonsBy(pokemons, Comparator.naturalOrder());
+                return bubbleSortList(pokemons, this::isGreater);
             case LENGHT:
-                return sortPokemonsBy(pokemons, Comparator.comparing(String::length));
+                return bubbleSortList(pokemons, this::isGreaterByLenght);
             default:
                 return pokemons;
         }
     }
 
-    private List<PokemonName> sortPokemonsBy(List<PokemonName> pokemons, Comparator<String> comparator) {
+    private List<PokemonName> bubbleSortList(List<PokemonName> pokemons, BiPredicate<String, String> compare) {
         int size = pokemons.size();
         for (int i = 0; i < size; i++) {
             for (int j = i + 1; j < size; j++) {
-                if (comparator.compare(pokemons.get(j).getName(), pokemons.get(i).getName()) < 0) { // i cant use comparator, REMOVE FROM HERE
+                if (compare.test(pokemons.get(j).getName(), pokemons.get(i).getName())) {
                     String aux = pokemons.get(i).getName();
                     pokemons.set(i, pokemons.get(j));
                     pokemons.set(j, new PokemonName(aux));
@@ -45,5 +45,18 @@ public class SearchUtils {
             }   
         }
         return pokemons;
+    }
+
+    private boolean isGreater(String a, String b) {
+        int min = Math.min(a.length(), b.length());
+        for (int i = 0; i < min; i++) {
+            if (a.charAt(i) < b.charAt(i)) return true;
+            if (a.charAt(i) > b.charAt(i)) return false;
+        }
+        return a.length() > b.length();
+    }
+
+    private boolean isGreaterByLenght(String a, String b) {
+        return a.length() < b.length();
     }
 }

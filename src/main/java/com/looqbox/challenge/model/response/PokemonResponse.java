@@ -3,17 +3,17 @@ package com.looqbox.challenge.model.response;
 import java.util.List;
 
 public class PokemonResponse {
-    private List<PokemonName> result;
+    private List<String> result;
 
-    public PokemonResponse(List<PokemonName> result) {
+    public PokemonResponse(List<String> result) {
         this.result = result;
     }
 
-    public List<PokemonName> getResult() {
+    public List<String> getResult() {
         return result;
     }
 
-    public void setResult(List<PokemonName> result) {
+    public void setResult(List<String> result) {
         this.result = result;
     }
      

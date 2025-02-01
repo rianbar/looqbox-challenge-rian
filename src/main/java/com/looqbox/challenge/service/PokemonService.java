@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.looqbox.challenge.constant.SortType;
 import com.looqbox.challenge.model.response.ApiResponse;
-import com.looqbox.challenge.model.response.PokemonName;
 import com.looqbox.challenge.model.response.PokemonResponse;
 import com.looqbox.challenge.utils.SearchUtils;
 
@@ -31,7 +30,8 @@ public class PokemonService {
     }
 
     private PokemonResponse getPokemonResponse(ApiResponse response, String query, SortType sort) {
-        List<PokemonName> result = query != null ? utils.filterPokemons(response.getResults(), query) : response.getResults();
-        return new PokemonResponse(utils.sortPokemons(result, sort));     //RESULTS MAY BE A LIST OF POKEMON NAMES, NOT A OBJECT
+        List<String> result = query != null ? 
+            utils.filterPokemons(response.getResults(), query) : utils.toStringList(response.getResults());
+        return new PokemonResponse(utils.sortPokemons(result, sort));
     }
 }

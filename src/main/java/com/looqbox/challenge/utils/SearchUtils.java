@@ -13,16 +13,24 @@ import com.looqbox.challenge.model.response.PokemonName;
 @Component
 public class SearchUtils {
 
-    public List<PokemonName> filterPokemons(List<PokemonName> pokemons, String query) {
-        List<PokemonName> result = new ArrayList<>();
+    public List<String> filterPokemons(List<PokemonName> pokemons, String query) {
+        List<String> result = new ArrayList<>();
         Pattern pattern = Pattern.compile(".*" + Pattern.quote(query) + ".*", Pattern.CASE_INSENSITIVE);
         for (PokemonName pokemon: pokemons) {
-            if (pattern.matcher(pokemon.getName()).matches()) result.add(pokemon);
+            if (pattern.matcher(pokemon.getName()).matches()) result.add(pokemon.getName());
         }
         return result;
     }
 
-    public List<PokemonName> sortPokemons(List<PokemonName> pokemons, SortType sort) { //try to clean this method
+    public List<String> toStringList(List<PokemonName> pokemons) {
+        List<String> result = new ArrayList<>();
+        for (PokemonName pokemon: pokemons) {
+            result.add(pokemon.getName());
+        }
+        return result;
+    }
+
+    public List<String> sortPokemons(List<String> pokemons, SortType sort) {
         switch (sort) {
             case ALPHABETICAL:
                 return bubbleSortList(pokemons, this::isGreater);
@@ -33,14 +41,14 @@ public class SearchUtils {
         }
     }
 
-    private List<PokemonName> bubbleSortList(List<PokemonName> pokemons, BiPredicate<String, String> compare) {
+    private List<String> bubbleSortList(List<String> pokemons, BiPredicate<String, String> compare) {
         int size = pokemons.size();
         for (int i = 0; i < size; i++) {
             for (int j = i + 1; j < size; j++) {
-                if (compare.test(pokemons.get(j).getName(), pokemons.get(i).getName())) {
-                    String aux = pokemons.get(i).getName();
+                if (compare.test(pokemons.get(j), pokemons.get(i))) {
+                    String aux = pokemons.get(i);
                     pokemons.set(i, pokemons.get(j));
-                    pokemons.set(j, new PokemonName(aux));
+                    pokemons.set(j, aux);
                 }
             }   
         }

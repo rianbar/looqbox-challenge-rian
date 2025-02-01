@@ -1,0 +1,6 @@
+spring:
+    application:
+        name: challenge
+api:
+  pokemon:
+    url: ${POKEAPI_URL:https://pokeapi.co/api/v2/pokemon?limit=10000}

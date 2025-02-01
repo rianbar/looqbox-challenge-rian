@@ -6,32 +6,35 @@ import org.springframework.stereotype.Service;
 
 import com.looqbox.challenge.constant.SortType;
 import com.looqbox.challenge.model.response.ApiResponse;
+import com.looqbox.challenge.model.response.HighlightResponse;
 import com.looqbox.challenge.model.response.PokemonResponse;
-import com.looqbox.challenge.utils.SearchUtils;
+import com.looqbox.challenge.utils.PokemonUtils;
 
 @Service
 public class PokemonService {
     
     PokeApiService pokeApi;
-    SearchUtils utils;
+    PokemonUtils utils;
 
-    public PokemonService(PokeApiService pokeApiService, SearchUtils utils) {
+    public PokemonService(PokeApiService pokeApiService, PokemonUtils utils) {
         this.pokeApi = pokeApiService;
         this.utils = utils;
     }
 
-    public PokemonResponse getPokemonService(String query, SortType sort) {
+    public PokemonResponse<String> getPokemonService(String query, SortType sort) {
         ApiResponse response = pokeApi.retrieveAllPokemons();
-        return getPokemonResponse(response, query, sort);
+        return orderPokemons(response, query, sort);
     }
 
-    public String getPokemonHighlightsService(String param) {
-        return param;
+    public PokemonResponse<HighlightResponse> getPokemonHighlightsService(String query, SortType sort) {
+        ApiResponse response = pokeApi.retrieveAllPokemons();
+        PokemonResponse<String> orderedPokemons = orderPokemons(response, query, sort);
+        return new PokemonResponse<HighlightResponse>(utils.toHihglightResponse(orderedPokemons.getResult(), query));
     }
 
-    private PokemonResponse getPokemonResponse(ApiResponse response, String query, SortType sort) {
+    private PokemonResponse<String> orderPokemons(ApiResponse response, String query, SortType sort) {
         List<String> result = query != null ? 
             utils.filterPokemons(response.getResults(), query) : utils.toStringList(response.getResults());
-        return new PokemonResponse(utils.sortPokemons(result, sort));
+        return new PokemonResponse<String>(utils.sortPokemons(result, sort));
     }
 }

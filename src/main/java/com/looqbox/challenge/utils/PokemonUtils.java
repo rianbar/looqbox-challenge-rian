@@ -8,11 +8,20 @@ import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
 
 import com.looqbox.challenge.constant.SortType;
+import com.looqbox.challenge.model.response.HighlightResponse;
 import com.looqbox.challenge.model.response.PokemonName;
 
 @Component
-public class SearchUtils {
+public class PokemonUtils {
 
+    public List<HighlightResponse> toHihglightResponse(List<String> pokemons, String query) {
+        List<HighlightResponse> result = new ArrayList<>();
+        for (String pokemon: pokemons) {
+            result.add(new HighlightResponse(pokemon ,pokemon.replaceAll("(?i)" + query, "<pre>$0</pre>")));
+        }
+        return result;
+    }
+        
     public List<String> filterPokemons(List<PokemonName> pokemons, String query) {
         List<String> result = new ArrayList<>();
         Pattern pattern = Pattern.compile(".*" + Pattern.quote(query) + ".*", Pattern.CASE_INSENSITIVE);

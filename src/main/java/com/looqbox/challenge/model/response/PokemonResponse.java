@@ -16,5 +16,4 @@ public class PokemonResponse<T> {
     public void setResult(List<T> result) {
         this.result = result;
     }
-     
 }

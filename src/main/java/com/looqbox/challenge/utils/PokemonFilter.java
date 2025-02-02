@@ -20,5 +20,4 @@ public class PokemonFilter {
         
         return result;
     }
-    
 }

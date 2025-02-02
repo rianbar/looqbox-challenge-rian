@@ -8,17 +8,23 @@ import com.looqbox.challenge.constant.SortType;
 import com.looqbox.challenge.model.response.ApiResponse;
 import com.looqbox.challenge.model.response.HighlightResponse;
 import com.looqbox.challenge.model.response.PokemonResponse;
-import com.looqbox.challenge.utils.PokemonUtils;
+import com.looqbox.challenge.utils.PokemonFilter;
+import com.looqbox.challenge.utils.PokemonFormatter;
+import com.looqbox.challenge.utils.PokemonSorter;
 
 @Service
 public class PokemonService {
     
-    PokeApiService pokeApi;
-    PokemonUtils utils;
+    private final PokeApiService pokeApi;
+    private final PokemonSorter sorter;
+    private final PokemonFilter filter;
+    private final PokemonFormatter formatter;
 
-    public PokemonService(PokeApiService pokeApiService, PokemonUtils utils) {
+    public PokemonService(PokeApiService pokeApiService, PokemonSorter sorter, PokemonFilter filter, PokemonFormatter formatter) {
         this.pokeApi = pokeApiService;
-        this.utils = utils;
+        this.sorter = sorter;
+        this.filter = filter;
+        this.formatter = formatter; 
     }
 
     public PokemonResponse<String> getPokemonService(String query, SortType sort) {
@@ -29,12 +35,14 @@ public class PokemonService {
     public PokemonResponse<HighlightResponse> getPokemonHighlightsService(String query, SortType sort) {
         ApiResponse response = pokeApi.retrieveAllPokemons();
         PokemonResponse<String> orderedPokemons = orderPokemons(response, query, sort);
-        return new PokemonResponse<HighlightResponse>(utils.toHihglightResponse(orderedPokemons.getResult(), query));
+        return new PokemonResponse<>(formatter.toHighlightResponse(orderedPokemons.getResult(), query));
     }
 
     private PokemonResponse<String> orderPokemons(ApiResponse response, String query, SortType sort) {
-        List<String> result = query != null ? 
-            utils.filterPokemons(response.getResults(), query) : utils.toStringList(response.getResults());
-        return new PokemonResponse<String>(utils.sortPokemons(result, sort));
+        List<String> result = (query != null) 
+            ? filter.filterPokemons(response.getResults(), query) 
+            : formatter.toStringList(response.getResults());
+            
+        return new PokemonResponse<>(sorter.sortPokemons(result, sort));
     }
 }

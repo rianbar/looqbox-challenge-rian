@@ -42,9 +42,9 @@ public class PokemonService {
     }
 
     private PokemonResponse<String> sortPokemons(ApiResponse response, String query, SortType sort) {
-        List<String> result = (query != null) 
-            ? filter.filterPokemons(response.getResults(), query) 
-            : formatter.toStringList(response.getResults());
+        List<String> result = Optional.ofNullable(query)
+            .map(q -> filter.filterPokemons(response.getResults(), q))
+            .orElse(formatter.toStringList(response.getResults()));
             
         return new PokemonResponse<>(sorter.sortPokemons(result, sort));
     }

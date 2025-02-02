@@ -33,8 +33,8 @@ public class PokemonController {
 
     @GetMapping("highlight")
     public ResponseEntity<PokemonResponse<HighlightResponse>> getPokemonHighlights(
-        @RequestParam(required = false) String query, 
-        @RequestParam(defaultValue = "ALPHABETICAL") SortType sort) {
+            @RequestParam(required = false) String query, 
+            @RequestParam(defaultValue = "ALPHABETICAL") SortType sort) {
         return ResponseEntity.status(HttpStatus.OK).body(service.getPokemonHighlightsService(query, sort));
     }
 }

@@ -1,6 +1,7 @@
 package com.looqbox.challenge.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -28,17 +29,19 @@ public class PokemonService {
     }
 
     public PokemonResponse<String> getPokemonService(String query, SortType sort) {
-        ApiResponse response = pokeApi.retrieveAllPokemons();
-        return orderPokemons(response, query, sort);
+        return sortPokemons(this.fetchPokemons().get(), query, sort);
     }
 
     public PokemonResponse<HighlightResponse> getPokemonHighlightsService(String query, SortType sort) {
-        ApiResponse response = pokeApi.retrieveAllPokemons();
-        PokemonResponse<String> orderedPokemons = orderPokemons(response, query, sort);
-        return new PokemonResponse<>(formatter.toHighlightResponse(orderedPokemons.getResult(), query));
+        PokemonResponse<String> sortedPokemons = sortPokemons(this.fetchPokemons().get(), query, sort);
+        return new PokemonResponse<>(formatter.toHighlightResponse(sortedPokemons.getResult(), query));
     }
 
-    private PokemonResponse<String> orderPokemons(ApiResponse response, String query, SortType sort) {
+    private Optional<ApiResponse> fetchPokemons() {
+        return Optional.ofNullable(pokeApi.retrieveAllPokemons());
+    }
+
+    private PokemonResponse<String> sortPokemons(ApiResponse response, String query, SortType sort) {
         List<String> result = (query != null) 
             ? filter.filterPokemons(response.getResults(), query) 
             : formatter.toStringList(response.getResults());

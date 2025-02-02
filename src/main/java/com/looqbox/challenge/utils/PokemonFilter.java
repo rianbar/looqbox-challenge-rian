@@ -14,10 +14,10 @@ public class PokemonFilter {
     public List<String> filterPokemons(List<PokemonName> pokemons, String query) {
         List<String> result = new ArrayList<>();
         Pattern pattern = Pattern.compile(".*" + Pattern.quote(query) + ".*", Pattern.CASE_INSENSITIVE);
-        for (PokemonName pokemon: pokemons) {
+        pokemons.forEach(pokemon -> {
             if (pattern.matcher(pokemon.getName()).matches()) result.add(pokemon.getName());
-        }
-        
+        });
+
         return result;
     }
 }

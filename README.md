@@ -1,5 +1,5 @@
 # looqbox-challenge-rian
 
-## Appilication Diagram
+## Application Diagram
 
 ![Diagram](pokemon-diagram.drawio.svg)

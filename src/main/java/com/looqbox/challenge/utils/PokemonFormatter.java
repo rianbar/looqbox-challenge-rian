@@ -16,7 +16,6 @@ public class PokemonFormatter {
         pokemons.forEach(pokemon -> {
             result.add(new HighlightResponse(pokemon, pokemon.replaceAll("(?i)" + query, "<pre>$0</pre>")));
         });
-
         return result;
     }
 
@@ -25,7 +24,6 @@ public class PokemonFormatter {
         pokemons.forEach(pokemon -> {
             result.add(pokemon.getName());
         });
-
         return result;
     }  
 }

@@ -49,7 +49,6 @@ public class PokemonSorter {
             if (a.charAt(i) < b.charAt(i)) return true;
             if (a.charAt(i) > b.charAt(i)) return false;
         }
-
         return a.length() > b.length();
     }
 

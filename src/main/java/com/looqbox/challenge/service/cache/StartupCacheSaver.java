@@ -27,5 +27,4 @@ public class StartupCacheSaver implements CommandLineRunner{
         ApiResponse response = pokeApi.retrieveAllPokemons();
         cache.saveAll(response.getResults());
     }
-    
 }

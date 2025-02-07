@@ -42,20 +42,25 @@ class PokemonServiceTest {
     private PokemonFormatter formatter;
 
     List<PokemonName> results;
+    List<String> pokemons;
 
     @BeforeEach
     void setUp() {
         ApiResponse apiResponse = new ApiResponse();
         results = List.of(new PokemonName("bulbasaur"), new PokemonName("ivysaur"));
+        pokemons = List.of("bulbasaur", "ivysaur");
         apiResponse.setResult(results);
     }
 
     @Test
     void testGetPokemonServiceWithQuery() {
 
+        List<String> bulbasaurList = List.of("bulbasaur");
+
         when(cache.getAll()).thenReturn(results);
-        when(filter.filterPokemons(results, "bul")).thenReturn(List.of("bulbasaur"));
-        when(sorter.sortPokemons(List.of("bulbasaur"), SortType.ALPHABETICAL)).thenReturn(List.of("bulbasaur"));
+        when(formatter.toStringList(results)).thenReturn(pokemons);
+        when(filter.filterPokemons(pokemons, "bul")).thenReturn(bulbasaurList);
+        when(sorter.sortPokemons(bulbasaurList, SortType.ALPHABETICAL)).thenReturn(bulbasaurList);
 
         PokemonResponse<String> response = pokemonService.getPokemonService("bul", SortType.ALPHABETICAL);
 
@@ -66,27 +71,26 @@ class PokemonServiceTest {
     void testGetPokemonServiceWithoutQuery() {
 
         when(cache.getAll()).thenReturn(results);
-        when(formatter.toStringList(results)).thenReturn(List.of("bulbasaur", "ivysaur"));
-        when(sorter.sortPokemons(List.of("bulbasaur", "ivysaur"), SortType.ALPHABETICAL))
-            .thenReturn(List.of("bulbasaur", "ivysaur"));
+        when(formatter.toStringList(results)).thenReturn(pokemons);
+        when(sorter.sortPokemons(pokemons, SortType.ALPHABETICAL)).thenReturn(pokemons);
 
         PokemonResponse<String> response = pokemonService.getPokemonService(null, SortType.ALPHABETICAL);
 
         assertNotNull(response);
-        assertEquals(List.of("bulbasaur", "ivysaur"), response.getResult());
+        assertEquals(pokemons, response.getResult());
     }
 
     @Test
     void testGetPokemonHighLightServiceWithQuery() {
 
         List<HighlightResponse> highlight = List.of(new HighlightResponse("bulbasaur", "<pre>bul</pre>basaur"));
+        List<String> bulbasaurList = List.of("bulbasaur");
 
         when(cache.getAll()).thenReturn(results);
-        when(filter.filterPokemons(results, "bul")).thenReturn(List.of("bulbasaur"));
-        when(sorter.sortPokemons(List.of("bulbasaur"), SortType.ALPHABETICAL))
-            .thenReturn(List.of("bulbasaur"));
-        when(formatter.toHighlightResponse(List.of("bulbasaur"), "bul"))
-            .thenReturn(highlight);
+        when(formatter.toStringList(results)).thenReturn(pokemons);
+        when(filter.filterPokemons(pokemons, "bul")).thenReturn(bulbasaurList);
+        when(sorter.sortPokemons(bulbasaurList, SortType.ALPHABETICAL)).thenReturn(bulbasaurList);
+        when(formatter.toHighlightResponse(bulbasaurList, "bul")).thenReturn(highlight);
 
         PokemonResponse<HighlightResponse> response = pokemonService.getPokemonHighlightsService("bul", SortType.ALPHABETICAL);
 
@@ -97,13 +101,12 @@ class PokemonServiceTest {
     void testGetPokemonHighLightServiceWithoutQuery() {
 
         List<HighlightResponse> highlight = List.of(new HighlightResponse("bulbasaur", "bulbasaur"));
+        List<String> bulbasaurList = List.of("bulbasaur");
 
         when(cache.getAll()).thenReturn(results);
-        when(formatter.toStringList(results)).thenReturn(List.of("bulbasaur"));
-        when(sorter.sortPokemons(List.of("bulbasaur"), SortType.ALPHABETICAL))
-            .thenReturn(List.of("bulbasaur"));
-        when(formatter.toHighlightResponse(List.of("bulbasaur"), null))
-            .thenReturn(highlight);
+        when(formatter.toStringList(results)).thenReturn(bulbasaurList);
+        when(sorter.sortPokemons(bulbasaurList, SortType.ALPHABETICAL)).thenReturn(bulbasaurList);
+        when(formatter.toHighlightResponse(bulbasaurList, null)).thenReturn(highlight);
 
         PokemonResponse<HighlightResponse> response = pokemonService.getPokemonHighlightsService(null, SortType.ALPHABETICAL);
 

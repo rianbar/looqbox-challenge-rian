@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.looqbox.challenge.constant.SortType;
 import com.looqbox.challenge.model.response.HighlightResponse;
-import com.looqbox.challenge.model.response.PokemonName;
 import com.looqbox.challenge.model.response.PokemonResponse;
 import com.looqbox.challenge.service.cache.InMemoryCacheManager;
 import com.looqbox.challenge.utils.PokemonFilter;
@@ -32,6 +31,7 @@ public class PokemonService {
 
     public PokemonResponse<String> getPokemonService(String query, SortType sort) {
         return ofNullable(cache.getAll())
+            .map(formatter::toStringList)
             .map(names -> sortPokemons(names, query, sort))
             .map(PokemonResponse::new)
             .get();
@@ -39,18 +39,17 @@ public class PokemonService {
 
     public PokemonResponse<HighlightResponse> getPokemonHighlightsService(String query, SortType sort) {
         return ofNullable(cache.getAll())
+            .map(formatter::toStringList)
             .map(names -> sortPokemons(names, query, sort))
             .map(list -> formatter.toHighlightResponse(list, query))
             .map(PokemonResponse::new)
             .get();
     }
 
-    private List<String> sortPokemons(List<PokemonName> names, String query, SortType sort) {
+    private List<String> sortPokemons(List<String> names, String query, SortType sort) {
         return ofNullable(query)
             .map(q -> filter.filterPokemons(names, q))
             .map(pokemons -> sorter.sortPokemons(pokemons, sort))
-            .orElse(sorter.sortPokemons(
-                formatter.toStringList(names), 
-                sort));
+            .orElse(sorter.sortPokemons(names, sort));
     }
 }

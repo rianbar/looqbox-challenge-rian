@@ -18,6 +18,7 @@ import com.looqbox.challenge.model.response.ApiResponse;
 import com.looqbox.challenge.model.response.HighlightResponse;
 import com.looqbox.challenge.model.response.PokemonName;
 import com.looqbox.challenge.model.response.PokemonResponse;
+import com.looqbox.challenge.service.cache.InMemoryCacheManager;
 import com.looqbox.challenge.utils.PokemonFilter;
 import com.looqbox.challenge.utils.PokemonFormatter;
 import com.looqbox.challenge.utils.PokemonSorter;
@@ -29,7 +30,7 @@ class PokemonServiceTest {
     private PokemonService pokemonService;
 
     @Mock
-    private PokeApiService pokeApi;
+    private InMemoryCacheManager cache;
 
     @Mock
     private PokemonSorter sorter;
@@ -40,13 +41,11 @@ class PokemonServiceTest {
     @Mock
     private PokemonFormatter formatter;
 
-    ApiResponse apiResponse;
-
     List<PokemonName> results;
 
     @BeforeEach
     void setUp() {
-        apiResponse = new ApiResponse();
+        ApiResponse apiResponse = new ApiResponse();
         results = List.of(new PokemonName("bulbasaur"), new PokemonName("ivysaur"));
         apiResponse.setResult(results);
     }
@@ -54,7 +53,7 @@ class PokemonServiceTest {
     @Test
     void testGetPokemonServiceWithQuery() {
 
-        when(pokeApi.retrieveAllPokemons()).thenReturn(apiResponse);
+        when(cache.getAll()).thenReturn(results);
         when(filter.filterPokemons(results, "bul")).thenReturn(List.of("bulbasaur"));
         when(sorter.sortPokemons(List.of("bulbasaur"), SortType.ALPHABETICAL)).thenReturn(List.of("bulbasaur"));
 
@@ -66,7 +65,7 @@ class PokemonServiceTest {
     @Test
     void testGetPokemonServiceWithoutQuery() {
 
-        when(pokeApi.retrieveAllPokemons()).thenReturn(apiResponse);
+        when(cache.getAll()).thenReturn(results);
         when(formatter.toStringList(results)).thenReturn(List.of("bulbasaur", "ivysaur"));
         when(sorter.sortPokemons(List.of("bulbasaur", "ivysaur"), SortType.ALPHABETICAL))
             .thenReturn(List.of("bulbasaur", "ivysaur"));
@@ -82,7 +81,7 @@ class PokemonServiceTest {
 
         List<HighlightResponse> highlight = List.of(new HighlightResponse("bulbasaur", "<pre>bul</pre>basaur"));
 
-        when(pokeApi.retrieveAllPokemons()).thenReturn(apiResponse);
+        when(cache.getAll()).thenReturn(results);
         when(filter.filterPokemons(results, "bul")).thenReturn(List.of("bulbasaur"));
         when(sorter.sortPokemons(List.of("bulbasaur"), SortType.ALPHABETICAL))
             .thenReturn(List.of("bulbasaur"));
@@ -99,7 +98,7 @@ class PokemonServiceTest {
 
         List<HighlightResponse> highlight = List.of(new HighlightResponse("bulbasaur", "bulbasaur"));
 
-        when(pokeApi.retrieveAllPokemons()).thenReturn(apiResponse);
+        when(cache.getAll()).thenReturn(results);
         when(formatter.toStringList(results)).thenReturn(List.of("bulbasaur"));
         when(sorter.sortPokemons(List.of("bulbasaur"), SortType.ALPHABETICAL))
             .thenReturn(List.of("bulbasaur"));

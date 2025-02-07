@@ -29,12 +29,18 @@ public class PokemonService {
     }
 
     public PokemonResponse<String> getPokemonService(String query, SortType sort) {
-        return sortPokemons(this.fetchPokemons().get(), query, sort);
+        return this.fetchPokemons()
+            .map(response -> sortPokemons(response, query, sort))
+            .get();
     }
 
     public PokemonResponse<HighlightResponse> getPokemonHighlightsService(String query, SortType sort) {
-        PokemonResponse<String> sortedPokemons = sortPokemons(this.fetchPokemons().get(), query, sort);
-        return new PokemonResponse<>(formatter.toHighlightResponse(sortedPokemons.getResult(), query));
+        return this.fetchPokemons()
+            .map(response -> sortPokemons(response, query, sort))
+            .map(sorted -> formatter.toHighlightResponse(sorted.getResult(), query))
+            .map(PokemonResponse::new)
+            .get();
+
     }
 
     private Optional<ApiResponse> fetchPokemons() {
@@ -42,10 +48,13 @@ public class PokemonService {
     }
 
     private PokemonResponse<String> sortPokemons(ApiResponse response, String query, SortType sort) {
-        List<String> result = Optional.ofNullable(query)
+        return Optional.ofNullable(query)
             .map(q -> filter.filterPokemons(response.getResults(), q))
-            .orElse(formatter.toStringList(response.getResults()));
-            
-        return new PokemonResponse<>(sorter.sortPokemons(result, sort));
+            .map(result -> sorter.sortPokemons(result, sort))
+            .map(PokemonResponse::new)
+            .orElseGet(() -> {
+                List<String> format = formatter.toStringList(response.getResults());
+                return new PokemonResponse<>(sorter.sortPokemons(format, sort));
+            });
     }
 }

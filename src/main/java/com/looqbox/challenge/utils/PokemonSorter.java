@@ -13,14 +13,11 @@ public class PokemonSorter {
     // based on the sort type, this method calls the bubbleSortList method to sort the pokemons
     // with the correct comparator
     public List<String> sortPokemons(List<String> pokemons, SortType sort) {
-        switch (sort) {
-            case ALPHABETICAL:
-                return bubbleSortList(pokemons, this::alphabeticalSort);
-            case LENGTH:
-                return bubbleSortList(pokemons, this::lenghtSort);
-            default:
-                return pokemons;
-        }
+        return switch (sort) {
+            case ALPHABETICAL -> bubbleSortList(pokemons, this::alphabeticalSort);
+            case LENGTH -> bubbleSortList(pokemons, this::lengthSort);
+            default -> pokemons;
+        };
     }
     
     // this method uses the bubble sort algorithm to sort the pokemons, it receives a Bipredicate to compare the pokemons-
@@ -53,7 +50,7 @@ public class PokemonSorter {
     }
 
     // here is a simple implementation of the lenght comparation, it compares the pokemons based on their lenghts
-    private boolean lenghtSort(String a, String b) {
+    private boolean lengthSort(String a, String b) {
         return a.length() < b.length();
     }   
 }

@@ -2,6 +2,7 @@ package com.looqbox.challenge.service;
 
 import java.util.List;
 
+import com.looqbox.challenge.exception.RetrievePokemonsException;
 import org.springframework.stereotype.Service;
 
 import com.looqbox.challenge.constant.SortType;
@@ -34,7 +35,7 @@ public class PokemonService {
             .map(formatter::toStringList)
             .map(names -> sortPokemons(names, query, sort))
             .map(PokemonResponse::new)
-            .get();
+            .orElseThrow(RetrievePokemonsException::new);
     }
 
     public PokemonResponse<HighlightResponse> getPokemonHighlightsService(String query, SortType sort) {
@@ -43,7 +44,7 @@ public class PokemonService {
             .map(names -> sortPokemons(names, query, sort))
             .map(list -> formatter.toHighlightResponse(list, query))
             .map(PokemonResponse::new)
-            .get();
+            .orElseThrow(RetrievePokemonsException::new);
     }
 
     private List<String> sortPokemons(List<String> names, String query, SortType sort) {

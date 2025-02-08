@@ -1,8 +1,6 @@
 package com.looqbox.challenge.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -64,7 +62,7 @@ class PokemonServiceTest {
 
         PokemonResponse<String> response = pokemonService.getPokemonService("bul", SortType.ALPHABETICAL);
 
-        assertTrue(response.getResult().size() > 0); 
+        assertFalse(response.getResult().isEmpty());
     }
 
     @Test
@@ -94,7 +92,7 @@ class PokemonServiceTest {
 
         PokemonResponse<HighlightResponse> response = pokemonService.getPokemonHighlightsService("bul", SortType.ALPHABETICAL);
 
-        assertTrue(response.getResult().size() > 0); 
+        assertFalse(response.getResult().isEmpty());
     }
 
     @Test
@@ -110,6 +108,6 @@ class PokemonServiceTest {
 
         PokemonResponse<HighlightResponse> response = pokemonService.getPokemonHighlightsService(null, SortType.ALPHABETICAL);
 
-        assertTrue(response.getResult().size() > 0); 
+        assertFalse(response.getResult().isEmpty());
     }
 }

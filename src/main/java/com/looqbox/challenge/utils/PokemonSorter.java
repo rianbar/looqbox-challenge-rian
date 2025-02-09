@@ -16,7 +16,6 @@ public class PokemonSorter {
         return switch (sort) {
             case ALPHABETICAL -> bubbleSortList(pokemons, this::alphabeticalSort);
             case LENGTH -> bubbleSortList(pokemons, this::lengthSort);
-            default -> pokemons;
         };
     }
     
